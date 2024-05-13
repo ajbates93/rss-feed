@@ -22,5 +22,18 @@ func main() {
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, World!"))
 	})
+
+	fmt.Println("Initialising the database connection...")
+	db, err := InitDB()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Database connection initialised successfully!")
+
+	defer db.Close()
+
+	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)
 }
