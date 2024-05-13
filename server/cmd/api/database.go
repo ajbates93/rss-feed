@@ -6,13 +6,9 @@ import (
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-)
 
-type Feed struct {
-	gorm.Model
-	Title string
-	URL   string
-}
+	"ajbates93/rss-feed/pkg/models"
+)
 
 func InitDB() (*gorm.DB, error) {
 	// Initialise the database connection
@@ -23,7 +19,7 @@ func InitDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	db.AutoMigrate(&Feed{})
+	db.AutoMigrate(&models.Feed{})
 
 	return db, nil
 }

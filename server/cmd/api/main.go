@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ajbates93/rss-feed/pkg/handlers"
 	"fmt"
 	"net/http"
 	"time"
@@ -10,6 +11,16 @@ import (
 )
 
 func main() {
+
+	fmt.Println("Initialising the database connection...")
+	db, err := InitDB()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("Database connection initialised successfully!")
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -19,18 +30,12 @@ func main() {
 
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, World!"))
 	})
 
-	fmt.Println("Initialising the database connection...")
-	_, err := InitDB()
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("Database connection initialised successfully!")
+	feedHandler := handlers.RSSFeedHandler{DB: db}
+	feedHandler.RegisterRoutes(r)
 
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)
