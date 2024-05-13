@@ -24,15 +24,13 @@ func main() {
 	})
 
 	fmt.Println("Initialising the database connection...")
-	db, err := InitDB()
+	_, err := InitDB()
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	fmt.Println("Database connection initialised successfully!")
-
-	defer db.Close()
 
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", r)

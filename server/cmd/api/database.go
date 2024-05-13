@@ -1,29 +1,29 @@
 package main
 
 import (
-	"context"
-	"database/sql"
 	"os"
-	"time"
 
 	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func InitDB() (*sql.DB, error) {
+type Feed struct {
+	gorm.Model
+	Title string
+	URL   string
+}
+
+func InitDB() (*gorm.DB, error) {
 	// Initialise the database connection
 	dsn := os.Getenv("RSS_FEED_DSN")
-	db, err := sql.Open("postgres", dsn)
+	db, err := gorm.Open(postgres.Open(dsn))
+
 	if err != nil {
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	err = db.PingContext(ctx)
-	if err != nil {
-		return nil, err
-	}
+	db.AutoMigrate(&Feed{})
 
 	return db, nil
 }
