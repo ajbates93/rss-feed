@@ -47,6 +47,12 @@ const onSubmit = async () => {
   if (data.value?.success) {
     // Push to store
     store.feeds.push(data.value?.data);
+    reset();
   }
+};
+
+const reset = () => {
+  url.value = "";
+  name.value = "";
 };
 </script>

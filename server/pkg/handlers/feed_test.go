@@ -61,6 +61,6 @@ func setupTestDB() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.AutoMigrate(&models.Feed{})
+	db.AutoMigrate(&models.Feed{}, &models.FeedItem{})
 	return db
 }

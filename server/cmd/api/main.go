@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ajbates93/rss-feed/internal/rss"
 	"ajbates93/rss-feed/pkg/handlers"
 	"fmt"
 	"net/http"
@@ -48,6 +49,11 @@ func main() {
 
 	feedHandler := handlers.RSSFeedHandler{DB: db}
 	feedHandler.RegisterRoutes(r)
+
+	feedItemHandler := handlers.RSSFeedItemHandler{DB: db}
+	feedItemHandler.RegisterRoutes(r)
+
+	go rss.StartFeedFetcher(db, 30*time.Minute)
 
 	fmt.Println("Starting the server on :4000...")
 	http.ListenAndServe(":4000", handler)
