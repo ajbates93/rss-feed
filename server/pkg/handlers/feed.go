@@ -27,7 +27,11 @@ func (h *RSSFeedHandler) CreateFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(feed)
+	// return a JSON response with the feed and a success boolean
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"data":    feed,
+	})
 }
 
 func (h *RSSFeedHandler) GetAllFeeds(w http.ResponseWriter, r *http.Request) {
