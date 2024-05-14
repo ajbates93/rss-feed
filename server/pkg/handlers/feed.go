@@ -58,8 +58,30 @@ func (h *RSSFeedHandler) UpdateFeed(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(feed)
 }
 
+func (h *RSSFeedHandler) DeleteFeed(w http.ResponseWriter, r *http.Request) {
+	// Get ID from url params
+	id := chi.URLParam(r, "id")
+
+	// Find feed by ID
+	var feed models.Feed
+	if err := h.DB.First(&feed, id).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	// Delete feed
+	if err := h.DB.Delete(&feed).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(feed)
+}
+
 func (h *RSSFeedHandler) RegisterRoutes(r chi.Router) {
 	r.Get("/feeds", h.GetAllFeeds)
 	r.Post("/feeds", h.CreateFeed)
 	r.Put("/feeds", h.UpdateFeed)
+	r.Delete("/feeds/{id}", h.DeleteFeed)
 }
