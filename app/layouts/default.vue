@@ -1,5 +1,5 @@
 <template>
-  <div class="font-mono">
+  <div class="bg-gray-50">
     <LayoutNavbar />
     <slot />
   </div>

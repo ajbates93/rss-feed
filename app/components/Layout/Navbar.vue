@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-orange-500 px-5 py-3 text-white font-mono flex items-center">
+  <div class="bg-orange-500 px-5 py-3 text-white flex items-center">
     <div class="text-2xl">
       <NuxtLink to="/">RSS Feed</NuxtLink>
     </div>

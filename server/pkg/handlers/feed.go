@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"ajbates93/rss-feed/internal/rss"
 	"ajbates93/rss-feed/pkg/models"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -25,6 +27,15 @@ func (h *RSSFeedHandler) CreateFeed(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// Run the Fetch Feed function after adding a new feed
+	go func() {
+		err := rss.FetchAndSaveFeeds(h.DB)
+		if err != nil {
+			// Log the error
+			log.Printf("Error fetching and saving feeds: %v", err)
+		}
+	}()
 
 	w.Header().Set("Content-Type", "application/json")
 	// return a JSON response with the feed and a success boolean

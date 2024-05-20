@@ -100,17 +100,17 @@ func StartFeedFetcher(db *gorm.DB, interval time.Duration) {
 	log.Printf("Starting feed fetcher with interval %v", interval)
 
 	// Initial execution of fetch and save
-	fetchAndSaveFeeds(db)
+	FetchAndSaveFeeds(db)
 
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
 	for range ticker.C {
-		fetchAndSaveFeeds(db)
+		FetchAndSaveFeeds(db)
 	}
 }
 
-func fetchAndSaveFeeds(db *gorm.DB) {
+func FetchAndSaveFeeds(db *gorm.DB) error {
 	feeds := []models.Feed{}
 	db.Find(&feeds)
 
@@ -126,10 +126,13 @@ func fetchAndSaveFeeds(db *gorm.DB) {
 
 		if err := SaveFeed(ctx, db, parsedFeed); err != nil {
 			log.Printf("Error saving feed %s: %v", feed.URL, err)
+			return err
 		}
 	}
 
 	if len(feeds) == 0 {
 		log.Println("No feeds to fetch")
 	}
+
+	return nil
 }
