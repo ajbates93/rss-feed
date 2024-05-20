@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
@@ -36,19 +35,20 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 	}
 
 	type ResponseItem struct {
-		Title       string    `json:"title"`
-		Author      string    `json:"author"`
-		URL         string    `json:"url"`
-		PublishedAt time.Time `json:"publishedAt"`
-		ImageURL    string    `json:"imageURL"`
+		Title       string `json:"title"`
+		Author      string `json:"author"`
+		URL         string `json:"url"`
+		PublishedAt string `json:"publishedAt"`
+		ImageURL    string `json:"imageURL"`
 	}
 
 	var responseItems []ResponseItem
 	for _, item := range feedItems {
+		formattedPublishedAt := item.PublishedAt.Format("02/01/2006")
 		responseItems = append(responseItems, ResponseItem{
 			Title:       item.Title,
 			Author:      item.Author,
-			PublishedAt: item.PublishedAt,
+			PublishedAt: formattedPublishedAt,
 			URL:         item.URL,
 			ImageURL:    item.ImageURL,
 		})

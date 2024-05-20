@@ -7,17 +7,21 @@
         :key="feed.id"
         class="feed-item border-b p-5 flex items-center justify-between"
       >
-        <div class="flex items-start">
-          <picture class="feed-image mr-5">
+        <div class="flex items-stretch">
+          <picture class="feed-image mr-5 max-w-xs">
             <img :src="feed.imageURL" alt="Feed Image" />
           </picture>
-          <div>
-            <div class="feed-title text-xl mb-1">{{ feed.title }}</div>
+          <div class="flex items-start justify-start flex-col">
+            <div class="feed-title text-xl mb-1">
+              <ULink :to="feed.url">
+                {{ feed.title }}
+              </ULink>
+            </div>
             <div class="feed-author mb-5">
               {{ feed.author }} - Published: {{ feed.publishedAt }}
             </div>
             <UButton>
-              <ULink :href="feed.url" class="feed-url">Read More</ULink>
+              <ULink :to="feed.url" class="feed-url">Read More</ULink>
             </UButton>
           </div>
         </div>
