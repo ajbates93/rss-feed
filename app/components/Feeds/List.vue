@@ -7,17 +7,22 @@
         :key="feed.id"
         class="feed-item border-b p-5 flex items-center justify-between"
       >
-        <div>
-          <div class="feed-title text-xl mb-1">{{ feed.title }}</div>
-          <div class="feed-author mb-5">
-            {{ feed.author }} - Published: {{ feed.publishedAt }}
+        <div class="flex items-start">
+          <picture class="feed-image mr-5">
+            <img :src="feed.imageURL" alt="Feed Image" />
+          </picture>
+          <div>
+            <div class="feed-title text-xl mb-1">{{ feed.title }}</div>
+            <div class="feed-author mb-5">
+              {{ feed.author }} - Published: {{ feed.publishedAt }}
+            </div>
+            <UButton>
+              <ULink :href="feed.url" class="feed-url">Read More</ULink>
+            </UButton>
           </div>
-          <UButton>
-            <ULink :href="feed.url" class="feed-url">Read More</ULink>
-          </UButton>
         </div>
       </div>
-      <div v-if="!feedItems.length" class="no-feeds p-5">
+      <div v-if="!feedItems?.length" class="no-feeds p-5">
         No feeds found :-(
       </div>
     </div>

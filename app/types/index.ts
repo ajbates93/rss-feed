@@ -10,6 +10,7 @@ export type FeedItem = {
   author: string;
   publishedAt: string;
   url: string;
+  imageURL: string;
 };
 
 type MetaApiResponse = {

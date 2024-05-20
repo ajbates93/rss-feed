@@ -40,6 +40,7 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 		Author      string    `json:"author"`
 		URL         string    `json:"url"`
 		PublishedAt time.Time `json:"publishedAt"`
+		ImageURL    string    `json:"imageURL"`
 	}
 
 	var responseItems []ResponseItem
@@ -49,6 +50,7 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 			Author:      item.Author,
 			PublishedAt: item.PublishedAt,
 			URL:         item.URL,
+			ImageURL:    item.ImageURL,
 		})
 	}
 

@@ -18,6 +18,7 @@ type FeedItem struct {
 	Author      string `gorm:"not null"`
 	Title       string `gorm:"not null"`
 	Description string
-	URL         string `gorm:"not null"`
+	URL         string `gorm:"not null;uniqueIndex:idx_feed_item_url"`
 	PublishedAt time.Time
+	ImageURL    string
 }

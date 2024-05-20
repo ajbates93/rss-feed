@@ -1,13 +1,12 @@
 package main
 
 import (
+	"ajbates93/rss-feed/pkg/models"
 	"os"
 
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-
-	"ajbates93/rss-feed/pkg/models"
 )
 
 func InitDB() (*gorm.DB, error) {
@@ -19,6 +18,7 @@ func InitDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
+	// For some reason this is not working...
 	db.AutoMigrate(&models.Feed{}, &models.FeedItem{})
 
 	return db, nil
