@@ -5,10 +5,12 @@
       <div
         v-for="feed in store.feeds"
         :key="feed.ID"
-        class="feed-item border-b p-5 flex items-center justify-between"
+        class="feed-item border mb-10 p-5 flex items-center justify-between bg-white"
       >
         <div>
-          <div class="feed-title">{{ feed.Title }}</div>
+          <div class="feed-title text-orange-500 font-bold">
+            {{ feed.Title }}
+          </div>
           <div class="feed-url">{{ feed.URL }}</div>
         </div>
         <div>

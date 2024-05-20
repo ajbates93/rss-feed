@@ -1,6 +1,26 @@
 <template>
   <div class="feeds max-w-screen-lg mx-auto">
-    <div class="title text-2xl text-left p-5">Current Feeds</div>
+    <div
+      class="title text-2xl text-left py-3 my-5 text-orange-400 flex justify-between items-center"
+    >
+      <div class="relative z-20">Latest Feeds</div>
+      <div class="relative z-20 pagination text-lg">
+        <UButton
+          @click="page--"
+          :disabled="page === 1"
+          class="!bg-white text-orange-500 border p-2 rounded mr-2"
+        >
+          Previous
+        </UButton>
+        <UButton
+          @click="page++"
+          class="!bg-white text-orange-500 border p-2 rounded"
+        >
+          Next
+        </UButton>
+        <USelect v-model="limit" :options="[10, 20, 50]" />
+      </div>
+    </div>
     <div class="feeds-list">
       <div
         v-for="feed in feedItems"
@@ -26,7 +46,7 @@
             <div class="feed-date mb-5">
               {{ feed.publishedAt }}
             </div>
-            <UButton>
+            <UButton class="bg-orange-500 mt-auto">
               <ULink :to="feed.url" class="feed-url">Read More</ULink>
             </UButton>
           </div>
@@ -41,12 +61,15 @@
 
 <script lang="ts" setup>
 import type { FeedItem, GetFeedItemsApiResponse } from "@/types";
+import { useStore } from "@/store";
 
-const feedItems = ref<FeedItem[]>([]);
+const { feedItems } = useStore();
+const page = ref<number>(1);
+const limit = ref<number>(10);
 
 const fetchFeedItems = async () => {
   const { data } = await useFetch<GetFeedItemsApiResponse>(
-    "http://localhost:4000/feed-items",
+    `http://localhost:4000/feed-items?page=${page.value}&limit=${limit.value}`,
     {
       lazy: true,
     },
@@ -54,10 +77,14 @@ const fetchFeedItems = async () => {
   if (!data.value || !data.value?.success) {
     return;
   }
-  if (data.value) {
-    feedItems.value = data.value.data;
+  if (data.value && data.value?.success) {
+    feedItems = data.value.data;
   }
 };
+
+watch([page, limit], () => {
+  fetchFeedItems();
+});
 
 fetchFeedItems();
 </script>

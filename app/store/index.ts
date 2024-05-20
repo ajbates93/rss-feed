@@ -1,11 +1,16 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { Feed } from "../types";
+import type { Feed, FeedItem } from "../types";
 
 export const useStore = defineStore("", () => {
-  const feeds = ref<Feed[]>([]);
+  state: () => ({
+    feeds: [] as Feed[],
+    feedItems: [] as FeedItem[],
+  });
 
-  return {
-    feeds,
-  };
+  actions: {
+    updateFeedItems(feedItems: FeedItem[]) {
+      this.feedItems = feedItems;
+    }
+  }
 });
