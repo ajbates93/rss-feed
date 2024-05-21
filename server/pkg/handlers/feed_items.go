@@ -3,6 +3,7 @@ package handlers
 import (
 	"ajbates93/rss-feed/pkg/models"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -27,12 +28,20 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 
 	offset := (page - 1) * limit
 
-	var feedItems []models.FeedItem
-	result := h.DB.Order("published_at desc").Limit(limit).Offset(offset).Find(&feedItems)
-	if result.Error != nil {
-		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+	var items []models.FeedItem
+	var total int64
+
+	if err := h.DB.Order("published_at desc").Limit(limit).Offset(offset).Find(&items); err.Error != nil {
+		http.Error(w, err.Error.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	if err := h.DB.Model(models.FeedItem{}).Count(&total); err.Error != nil {
+		http.Error(w, err.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("page: %d, limit: %d, offset: %d, total: %d", page, limit, offset, total)
 
 	type ResponseItem struct {
 		Title       string `json:"title"`
@@ -43,7 +52,7 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 	}
 
 	var responseItems []ResponseItem
-	for _, item := range feedItems {
+	for _, item := range items {
 		formattedPublishedAt := item.PublishedAt.Format("02/01/2006")
 		responseItems = append(responseItems, ResponseItem{
 			Title:       item.Title,
@@ -61,7 +70,8 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 		"meta": map[string]interface{}{
 			"page":  page,
 			"limit": limit,
-			"total": len(feedItems),
+			"items": len(items),
+			"total": total,
 		},
 	})
 }

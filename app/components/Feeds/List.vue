@@ -3,27 +3,15 @@
     <div
       class="title text-2xl text-left py-3 my-5 text-orange-400 flex justify-between items-center"
     >
-      <div class="relative z-20">Latest Feeds</div>
-      <div class="relative z-20 pagination text-lg">
-        <UButton
-          @click="page--"
-          :disabled="page === 1"
-          class="!bg-white text-orange-500 border p-2 rounded mr-2"
-        >
-          Previous
-        </UButton>
-        <UButton
-          @click="page++"
-          class="!bg-white text-orange-500 border p-2 rounded"
-        >
-          Next
-        </UButton>
-        <USelect v-model="limit" :options="[10, 20, 50]" />
+      <div class="relative z-20">
+        Displaying {{ store.feedItemsMeta.items }} results out of
+        {{ store.feedItemsMeta.total }}
       </div>
+      <FeedsPagination />
     </div>
     <div class="feeds-list">
       <div
-        v-for="feed in feedItems"
+        v-for="feed in store.feedItems"
         :key="feed.id"
         class="feed-item border rounded-xl mb-10 overflow-hidden flex items-center justify-between bg-white shadow-sm"
       >
@@ -52,24 +40,25 @@
           </div>
         </div>
       </div>
-      <div v-if="!feedItems?.length" class="no-feeds p-5">
+      <div v-if="!store.feedItems?.length" class="no-feeds p-5">
         No feeds found :-(
       </div>
+    </div>
+    <div class="flex items-center justify-end">
+      <FeedsPagination />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { FeedItem, GetFeedItemsApiResponse } from "@/types";
+import type { GetFeedItemsApiResponse } from "@/types";
 import { useStore } from "@/store";
 
-const { feedItems } = useStore();
-const page = ref<number>(1);
-const limit = ref<number>(10);
+const store = useStore();
 
 const fetchFeedItems = async () => {
   const { data } = await useFetch<GetFeedItemsApiResponse>(
-    `http://localhost:4000/feed-items?page=${page.value}&limit=${limit.value}`,
+    `http://localhost:4000/feed-items?page=${store.page}&limit=${store.limit}`,
     {
       lazy: true,
     },
@@ -78,11 +67,12 @@ const fetchFeedItems = async () => {
     return;
   }
   if (data.value && data.value?.success) {
-    feedItems = data.value.data;
+    store.updateFeedItems(data.value.data);
+    store.updateFeedItemsMeta(data.value.meta);
   }
 };
 
-watch([page, limit], () => {
+watch([store.page, store.limit], () => {
   fetchFeedItems();
 });
 

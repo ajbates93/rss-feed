@@ -13,9 +13,10 @@ export type FeedItem = {
   imageURL: string;
 };
 
-type MetaApiResponse = {
+export type MetaApiResponse = {
   page: number;
   limit: number;
+  items: number;
   total: number;
 };
 
