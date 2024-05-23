@@ -41,8 +41,6 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	log.Printf("page: %d, limit: %d, offset: %d, total: %d", page, limit, offset, total)
-
 	type ResponseItem struct {
 		Title       string `json:"title"`
 		Author      string `json:"author"`
@@ -68,10 +66,11 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 		"data":    responseItems,
 		"success": true,
 		"meta": map[string]interface{}{
-			"page":  page,
-			"limit": limit,
-			"items": len(items),
-			"total": total,
+			"page":       page,
+			"totalPages": total/int64(limit) + 1,
+			"limit":      limit,
+			"items":      len(items),
+			"total":      total,
 		},
 	})
 }

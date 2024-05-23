@@ -7,6 +7,7 @@ export const useStore = defineStore("store", {
     feedItems: [] as FeedItem[],
     feedItemsMeta: {
       page: 1,
+      totalPages: 0,
       limit: 10,
       items: 0,
       total: 0,

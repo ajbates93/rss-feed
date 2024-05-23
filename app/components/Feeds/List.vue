@@ -3,9 +3,18 @@
     <div
       class="title text-2xl text-left py-3 my-5 text-orange-400 flex justify-between items-center"
     >
-      <div class="relative z-20">
-        Displaying {{ store.feedItemsMeta.items }} results out of
-        {{ store.feedItemsMeta.total }}
+      <div v-if="loading" class="loading flex items-center">
+        <div class="text-gray-700">Loading feeds...</div>
+        <UIcon name="i-heroicons-arrow-path" class="animate-spin ml-3" />
+      </div>
+      <div v-if="!loading" class="relative z-20 text-gray-700">
+        Displaying page
+        <span class="text-orange-400">{{ store.feedItemsMeta.page }}</span>
+        of
+        <span class="text-orange-400">{{
+          store.feedItemsMeta.totalPages
+        }}</span>
+        page<span v-if="store.feedItemsMeta.totalPages > 1">s</span>
       </div>
       <FeedsPagination />
     </div>
@@ -40,11 +49,11 @@
           </div>
         </div>
       </div>
-      <div v-if="!store.feedItems?.length" class="no-feeds p-5">
+      <div v-if="!store.feedItems?.length && !loading" class="no-feeds p-5">
         No feeds found :-(
       </div>
     </div>
-    <div class="flex items-center justify-end">
+    <div v-if="store.feedItems?.length" class="flex items-center justify-end">
       <FeedsPagination />
     </div>
   </div>
@@ -53,26 +62,34 @@
 <script lang="ts" setup>
 import type { GetFeedItemsApiResponse } from "@/types";
 import { useStore } from "@/store";
+import { storeToRefs } from "pinia";
 
 const store = useStore();
+const { page, limit } = storeToRefs(store);
+const loading = ref(false);
+const errorMessage = ref<string>("");
 
 const fetchFeedItems = async () => {
-  const { data } = await useFetch<GetFeedItemsApiResponse>(
-    `http://localhost:4000/feed-items?page=${store.page}&limit=${store.limit}`,
-    {
-      lazy: true,
-    },
-  );
-  if (!data.value || !data.value?.success) {
-    return;
-  }
-  if (data.value && data.value?.success) {
-    store.updateFeedItems(data.value.data);
-    store.updateFeedItemsMeta(data.value.meta);
+  try {
+    loading.value = true;
+    const response = await $fetch<GetFeedItemsApiResponse>(
+      `http://localhost:4000/feed-items?page=${store.page}&limit=${store.limit}`,
+    );
+    if (!response || !response?.success) {
+      return;
+    }
+    if (response && response.success) {
+      store.updateFeedItems(response.data);
+      store.updateFeedItemsMeta(response.meta);
+    }
+  } catch (e: Error) {
+    errorMessage.value = e.message;
+  } finally {
+    loading.value = false;
   }
 };
 
-watch([store.page, store.limit], () => {
+watch([page, limit], () => {
   fetchFeedItems();
 });
 

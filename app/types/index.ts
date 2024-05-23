@@ -15,6 +15,7 @@ export type FeedItem = {
 
 export type MetaApiResponse = {
   page: number;
+  totalPages: number;
   limit: number;
   items: number;
   total: number;
