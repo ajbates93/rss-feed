@@ -3,7 +3,9 @@ package main
 import (
 	"ajbates93/rss-feed/internal/rss"
 	"ajbates93/rss-feed/pkg/handlers"
+	"ajbates93/rss-feed/pkg/models"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -11,6 +13,18 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/cors"
 )
+
+type config struct {
+	db struct {
+		dsn string
+	}
+}
+
+type application struct {
+	config config
+	logger *slog.Logger
+	models models.Models
+}
 
 func main() {
 

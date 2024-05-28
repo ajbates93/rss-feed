@@ -16,7 +16,7 @@ type RSSFeedHandler struct {
 }
 
 func (h *RSSFeedHandler) CreateFeed(w http.ResponseWriter, r *http.Request) {
-	var feed models.Feed
+	var feed models.FeedModel
 	err := json.NewDecoder(r.Body).Decode(&feed)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -46,7 +46,7 @@ func (h *RSSFeedHandler) CreateFeed(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *RSSFeedHandler) GetAllFeeds(w http.ResponseWriter, r *http.Request) {
-	var feeds []models.Feed
+	var feeds []models.FeedModel
 	if err := h.DB.Find(&feeds).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -57,7 +57,7 @@ func (h *RSSFeedHandler) GetAllFeeds(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *RSSFeedHandler) UpdateFeed(w http.ResponseWriter, r *http.Request) {
-	var feed models.Feed
+	var feed models.FeedModel
 	err := json.NewDecoder(r.Body).Decode(&feed)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -78,7 +78,7 @@ func (h *RSSFeedHandler) DeleteFeed(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
 	// Find feed by ID
-	var feed models.Feed
+	var feed models.FeedModel
 	if err := h.DB.First(&feed, id).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

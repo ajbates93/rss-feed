@@ -19,7 +19,7 @@ func InitDB() (*gorm.DB, error) {
 	}
 
 	// For some reason this is not working...
-	db.AutoMigrate(&models.Feed{}, &models.FeedItem{})
+	db.AutoMigrate(&models.FeedModel{}, &models.FeedItemModel{})
 
 	return db, nil
 }

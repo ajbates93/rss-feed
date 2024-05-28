@@ -28,7 +28,7 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 
 	offset := (page - 1) * limit
 
-	var items []models.FeedItem
+	var items []models.FeedItemModel
 	var total int64
 
 	if err := h.DB.Order("published_at desc").Limit(limit).Offset(offset).Find(&items); err.Error != nil {
@@ -36,7 +36,7 @@ func (h *RSSFeedItemHandler) GetFeedItems(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err := h.DB.Model(models.FeedItem{}).Count(&total); err.Error != nil {
+	if err := h.DB.Model(models.FeedItemModel{}).Count(&total); err.Error != nil {
 		http.Error(w, err.Error.Error(), http.StatusInternalServerError)
 		return
 	}

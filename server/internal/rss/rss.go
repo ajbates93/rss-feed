@@ -29,7 +29,7 @@ func SaveFeed(ctx context.Context, db *gorm.DB, feed *gofeed.Feed) error {
 	log.Printf("Saving feed %s", feed.Title)
 
 	// Check if the feed already exists
-	var existingFeed models.Feed
+	var existingFeed models.FeedModel
 
 	if err := db.Where("url = ?", feed.FeedLink).First(&existingFeed).Error; err != nil {
 		// Feed already exists, skip insertion
@@ -39,7 +39,7 @@ func SaveFeed(ctx context.Context, db *gorm.DB, feed *gofeed.Feed) error {
 
 		// Feed does not exist, create a new one
 		// Save the feed to the database
-		dbFeed := models.Feed{
+		dbFeed := models.FeedModel{
 			Title: feed.Title,
 			URL:   feed.FeedLink,
 		}
@@ -55,7 +55,7 @@ func SaveFeed(ctx context.Context, db *gorm.DB, feed *gofeed.Feed) error {
 
 	// Save the feed items to the database
 	for _, item := range feed.Items {
-		dbItem := &models.FeedItem{
+		dbItem := &models.FeedItemModel{
 			FeedID:      existingFeed.ID,
 			Author:      existingFeed.Title,
 			Title:       item.Title,
@@ -82,13 +82,13 @@ func SaveFeed(ctx context.Context, db *gorm.DB, feed *gofeed.Feed) error {
 
 	// Check the total count of articles in the database
 	var count int64
-	if err := db.Model(&models.FeedItem{}).Count(&count).Error; err != nil {
+	if err := db.Model(&models.FeedItemModel{}).Count(&count).Error; err != nil {
 		return err
 	}
 
 	// If the count exceeds the threshold, remove the oldest articles
 	if count > 100 {
-		if err := db.Where("id IN (?)", db.Model(&models.FeedItem{}).Order("published_at ASC").Limit(int(count-100)).Select("id")).Delete(&models.FeedItem{}).Error; err != nil {
+		if err := db.Where("id IN (?)", db.Model(&models.FeedItemModel{}).Order("published_at ASC").Limit(int(count-100)).Select("id")).Delete(&models.FeedItemModel{}).Error; err != nil {
 			return err
 		}
 	}
@@ -111,7 +111,7 @@ func StartFeedFetcher(db *gorm.DB, interval time.Duration) {
 }
 
 func FetchAndSaveFeeds(db *gorm.DB) error {
-	feeds := []models.Feed{}
+	feeds := []models.FeedModel{}
 	db.Find(&feeds)
 
 	for _, feed := range feeds {

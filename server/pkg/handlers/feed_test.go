@@ -25,7 +25,7 @@ func TestCreateFeed(t *testing.T) {
 	feedHandler := &handlers.RSSFeedHandler{DB: db}
 
 	// Create a new feed payload
-	feed := &models.Feed{
+	feed := &models.FeedModel{
 		Title: "Test Feed",
 		URL:   "http://example.com/feed",
 	}
@@ -47,7 +47,7 @@ func TestCreateFeed(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 
 	// Check the response body
-	var createdFeed models.Feed
+	var createdFeed models.FeedModel
 	err = json.NewDecoder(rr.Body).Decode(&createdFeed)
 	require.NoError(t, err)
 	assert.Equal(t, feed.Title, createdFeed.Title)
@@ -61,6 +61,6 @@ func setupTestDB() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.AutoMigrate(&models.Feed{}, &models.FeedItem{})
+	db.AutoMigrate(&models.FeedModel{}, &models.FeedItemModel{})
 	return db
 }
