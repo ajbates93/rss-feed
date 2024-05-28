@@ -5,19 +5,6 @@ import (
 	"time"
 )
 
-type Feed struct {
-	ID        int64     `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	DeletedAt time.Time `json:"deletedAt"`
-	Title     string    `json:"title"`
-	URL       string    `json:"url"`
-}
-
-type FeedModel struct {
-	DB *sql.DB
-}
-
 type FeedItem struct {
 	ID          int64     `json:"id"`
 	CreatedAt   time.Time `json:"createdAt"`

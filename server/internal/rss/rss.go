@@ -3,6 +3,7 @@ package rss
 import (
 	"ajbates93/rss-feed/pkg/models"
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
@@ -110,7 +111,7 @@ func StartFeedFetcher(db *gorm.DB, interval time.Duration) {
 	}
 }
 
-func FetchAndSaveFeeds(db *gorm.DB) error {
+func FetchAndSaveFeeds(db *sql.DB) error {
 	feeds := []models.FeedModel{}
 	db.Find(&feeds)
 

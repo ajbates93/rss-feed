@@ -1,25 +1,32 @@
 package main
 
 import (
-	"ajbates93/rss-feed/pkg/models"
+	"context"
+	"database/sql"
 	"os"
+	"time"
 
 	_ "github.com/lib/pq"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
-func InitDB() (*gorm.DB, error) {
+func InitDB() (*sql.DB, error) {
 	// Initialise the database connection
 	dsn := os.Getenv("RSS_FEED_DSN")
-	db, err := gorm.Open(postgres.Open(dsn))
+	// db, err := gorm.Open(postgres.Open(dsn))
+	db, err := sql.Open("postgres", dsn)
 
 	if err != nil {
 		return nil, err
 	}
 
-	// For some reason this is not working...
-	db.AutoMigrate(&models.FeedModel{}, &models.FeedItemModel{})
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err = db.PingContext(ctx)
+	if err != nil {
+		db.Close()
+		return nil, err
+	}
 
 	return db, nil
 }

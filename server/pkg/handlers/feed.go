@@ -1,29 +1,40 @@
 package handlers
 
 import (
+	"ajbates93/rss-feed/internal/data"
 	"ajbates93/rss-feed/internal/rss"
 	"ajbates93/rss-feed/pkg/models"
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"gorm.io/gorm"
 )
 
 type RSSFeedHandler struct {
-	DB *gorm.DB
+	DB *sql.DB
 }
 
 func (h *RSSFeedHandler) CreateFeed(w http.ResponseWriter, r *http.Request) {
-	var feed models.FeedModel
-	err := json.NewDecoder(r.Body).Decode(&feed)
+	var input struct {
+		Title string `json:"title"`
+		URL   string `json:"url"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := h.DB.Create(&feed).Error; err != nil {
+	feed := &data.Feed{
+		Title: input.Title,
+		URL:   input.URL,
+	}
+	err = data.FeedModel.Insert(&feed)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
