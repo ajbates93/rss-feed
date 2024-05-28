@@ -10,8 +10,15 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@capacitor/app": "6.0.0",
+    "@capacitor/core": "6.0.0",
+    "@capacitor/haptics": "6.0.0",
+    "@capacitor/ios": "6.0.0",
+    "@capacitor/keyboard": "6.0.0",
+    "@capacitor/status-bar": "6.0.0",
     "@nuxt/ui": "latest",
     "@nuxtjs/google-fonts": "latest",
+    "@nuxtjs/ionic": "latest",
     "@pinia/nuxt": "^0.5.1",
     "module": "^1.2.5",
     "nuxt": "^3.11.2",
@@ -19,6 +26,7 @@
     "vue-router": "^4.3.2"
   },
   "devDependencies": {
+    "@capacitor/cli": "6.0.0",
     "typescript": "^5.4.5"
   }
 }
